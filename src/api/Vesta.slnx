@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="Vesta.Api/Vesta.Api.csproj" />
+  <Project Path="Vesta.Application/Vesta.Application.csproj" />
+  <Project Path="Vesta.Domain/Vesta.Domain.csproj" />
+  <Project Path="Vesta.Infrastructure/Vesta.Infrastructure.csproj" />
+</Solution>
