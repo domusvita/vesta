@@ -40,9 +40,11 @@ var host = new HostBuilder()
                 .AddVestaInfrastructure()
                 .AddVestaApplication();
 
-            services.Configure<JsonSerializerOptions>(options =>
+            services.Configure<WorkerOptions>(options =>
             {
-                options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+                options.Serializer = new Azure.Core.Serialization.JsonObjectSerializer(
+                    new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }
+                );
             });
         }
     )
