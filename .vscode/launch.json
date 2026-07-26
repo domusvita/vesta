@@ -1,0 +1,33 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "API: Azure Functions",
+      "type": "coreclr",
+      "request": "attach",
+      "processName": "dotnet",
+      "preLaunchTask": "func: host start"
+    },
+    {
+      "name": "Web: Vite Dev Server",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "cwd": "${workspaceFolder}/src/web",
+      "console": "integratedTerminal",
+      "serverReadyAction": {
+        "pattern": "Local:.*?(https?://\\S+)",
+        "uriFormat": "%s",
+        "action": "openExternally"
+      }
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Full Stack",
+      "configurations": ["API: Azure Functions", "Web: Vite Dev Server"],
+      "stopAll": true
+    }
+  ]
+}

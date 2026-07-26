@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Vesta.Infrastructure.Persistence;
 
 namespace Vesta.Api.Extensions;
 
@@ -30,17 +32,20 @@ public static class ServiceCollectionExtensions
         /// Adds and configures Vesta API services, including controllers, OpenAPI documentation, endpoint API
         /// explorer, and authentication, to the service collection.
         /// </summary>
+        /// <param name="configuration"></param>
         /// <returns>
         /// The <see cref="IServiceCollection"/> instance with Vesta API services configured. This enables further
         /// chaining of service configuration methods.
         /// </returns>
-        public IServiceCollection AddVestaApi()
+        public IServiceCollection AddVestaApi(IConfigurationManager configuration)
         {
             services.AddControllers();
             services.AddOpenApi();
             services
                 .AddEndpointsApiExplorer()
-                .AddAuthentication();
+                .AddVestaAuthentication(configuration)
+                .AddDatabase(configuration);
+
             return services;
         }
 
@@ -52,16 +57,31 @@ public static class ServiceCollectionExtensions
         /// should be called during application startup to enable secure authentication for
         /// protected endpoints.
         /// </remarks>
-        private void AddAuthentication()
+        private IServiceCollection AddVestaAuthentication(IConfigurationManager configuration)
         {
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer
                 (options =>
                     {
-                        options.Authority = "https://dev-0o6diwm4bjc1cwiw.us.auth0.com/";
-                        options.Audience = "https://localhost:7141";
+                        options.Authority = configuration["Auth0:Domain"];
+                        options.Audience = configuration["Auth0:Audience"];
                     }
                 );
+
+            return services;
+        }
+
+        /// <summary>
+        /// Adds and configures the database context for the application using PostgreSQL as the database provider.
+        /// </summary>
+        /// <param name="configuration">The configuration manager used to retrieve the connection string.</param>
+        private void AddDatabase(IConfigurationManager configuration)
+        {
+            services.AddDbContext<VestaDbContext>
+            (options => options
+                .UseNpgsql(configuration.GetConnectionString("DefaultConnection"))
+                .UseSnakeCaseNamingConvention()
+            );
         }
     }
 }
