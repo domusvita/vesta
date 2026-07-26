@@ -60,7 +60,11 @@ public class JwtMiddleware(IConfiguration configuration) : IFunctionsWorkerMiddl
         }
 
         await next(context);
-    }
+
+        if (context.GetInvocationResult().Value is HttpResponseData response)
+        {
+            AddCorsHeaders(response);
+        }
 
     /// <summary>
     /// Extracts the JWT token from the Authorization header of the HTTP request.
