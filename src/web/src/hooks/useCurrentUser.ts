@@ -22,7 +22,6 @@ export default function useCurrentUser() {
         throw err
       })
 
-      console.log('Current user:', user)
 
       if (user) {
         setUser(user)
