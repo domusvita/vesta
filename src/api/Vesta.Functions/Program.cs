@@ -1,7 +1,6 @@
 using System.Text.Json;
 using Azure.Identity;
 using Microsoft.Azure.Functions.Worker;
-using Microsoft.Azure.Functions.Worker.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -9,10 +8,6 @@ using Vesta.Application.Extensions;
 using Vesta.Functions.Extensions;
 using Vesta.Functions.Middleware;
 using Vesta.Infrastructure.Extensions;
-
-var builder = FunctionsApplication.CreateBuilder(args);
-
-builder.ConfigureFunctionsWebApplication();
 
 var host = new HostBuilder()
     .ConfigureAppConfiguration
