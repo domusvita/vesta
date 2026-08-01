@@ -1,0 +1,28 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "func: host start",
+      "type": "func",
+      "command": "host start --port 7207",
+      "problemMatcher": "$func-dotnet-watch",
+      "options": {
+        "cwd": "${workspaceFolder}/src/api/Vesta.Functions"
+      },
+      "dependsOn": "dotnet: build api",
+      "isBackground": true
+    },
+    {
+      "label": "dotnet: build api",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "build",
+        "${workspaceFolder}/src/api/Vesta.Functions/Vesta.Functions.csproj",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "problemMatcher": "$msCompile"
+    }
+  ]
+}
