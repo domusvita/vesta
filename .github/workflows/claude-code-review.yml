@@ -18,6 +18,11 @@ jobs:
     #   github.event.pull_request.user.login == 'new-developer' ||
     #   github.event.pull_request.author_association == 'FIRST_TIME_CONTRIBUTOR'
 
+    # Skip: commits pushed by the Copilot coding agent set github.actor to
+    # 'Copilot', which fails Claude's OIDC->app-token exchange (401, see
+    # anthropics/claude-code-action#1017) since it isn't a repo collaborator.
+    if: github.actor != 'Copilot'
+
     runs-on: ubuntu-latest
     permissions:
       contents: read
