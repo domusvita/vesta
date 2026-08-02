@@ -3,4 +3,5 @@
   <Project Path="Vesta.Domain/Vesta.Domain.csproj" />
   <Project Path="Vesta.Functions/Vesta.Functions.csproj" Id="c5564a53-4492-40dd-a5f5-4067c94d2784" />
   <Project Path="Vesta.Infrastructure/Vesta.Infrastructure.csproj" />
+  <Project Path="Vesta.UnitTests/Vesta.UnitTests.csproj" />
 </Solution>

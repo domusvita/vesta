@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find / -iname \"Microsoft.Azure.Functions.Worker.dll\" 2>/dev/null | grep -v obj | head -5 *)",
+      "Read(//d//**)",
+      "Read(//c/Users/chris/.nuget/**)",
+      "Bash(dotnet test *)",
+      "Bash(rm -rf TestResults)",
+      "Bash(docker exec *)",
+      "Read(//c/Users/chris/AppData/Roaming/Microsoft/UserSecrets/**)",
+      "Bash(xargs -I{} sh -c 'echo {}; cat {}')",
+      "Bash(sleep 1; cat /tmp/func.log 2>&1 | tail -50; echo \"---procs---\"; ps aux | grep -i func | grep -v grep)",
+      "Read(//tmp/**)",
+      "Bash(curl -s -o /dev/null -w \"GET /api/users \\(no auth\\) -> %{http_code}\\\\n\" http://localhost:7071/api/users)",
+      "Bash(curl -s -o /dev/null -w \"GET /api/users/me \\(no auth\\) -> %{http_code}\\\\n\" http://localhost:7071/api/users/me)",
+      "Bash(curl -s -o /dev/null -w \"PUT /api/users/00000000-0000-0000-0000-000000000000 \\(no auth\\) -> %{http_code}\\\\n\" -X PUT http://localhost:7071/api/users/00000000-0000-0000-0000-000000000000 -H \"Content-Type: application/json\" -d '{\"displayName\":\"Test\"}')",
+      "Bash(curl -s -o /dev/null -w \"DELETE /api/users/00000000-0000-0000-0000-000000000000 \\(no auth\\) -> %{http_code}\\\\n\" -X DELETE http://localhost:7071/api/users/00000000-0000-0000-0000-000000000000)",
+      "Bash(curl -s -o /dev/null -w \"POST /api/users/admin \\(no auth\\) -> %{http_code}\\\\n\" -X POST http://localhost:7071/api/users/admin -H \"Content-Type: application/json\" -d '{\"displayName\":\"Test\"}')",
+      "Bash(curl -s -o /dev/null -w \"GET / -> %{http_code}\\\\n\" http://localhost:5173/)",
+      "Bash(curl -s -o /dev/null -w \"GET http://localhost:5173/api/users -> %{http_code}\\\\n\" http://localhost:5173/api/users)",
+      "Bash(taskkill //F //IM func.exe)",
+      "Bash(taskkill //F //IM node.exe)",
+      "Bash(powershell -NoProfile -Command \"Get-CimInstance Win32_Process -Filter \\\\\"name='dotnet.exe'\\\\\" | Select-Object ProcessId, CommandLine | Format-List\")",
+      "Bash(powershell -NoProfile -Command ' *)",
+      "PowerShell(Get-CimInstance Win32_Process -Filter \"name='dotnet.exe' or name='func.exe'\")"
+    ]
+  }
+}
