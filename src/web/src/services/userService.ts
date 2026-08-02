@@ -15,6 +15,11 @@ function extractErrorMessage(error: unknown, fallback: string): string {
       return message
     }
   }
+
+  if (error instanceof Error && error.message) {
+    return error.message
+  }
+
   return fallback
 }
 
