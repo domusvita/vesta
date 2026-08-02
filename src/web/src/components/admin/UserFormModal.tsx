@@ -7,7 +7,8 @@ import { createUser, updateUser } from '../../services/userService'
 import type { UserDto } from '../../types/user'
 
 function isTodayOrEarlier(dateStr: string): boolean {
-  const date = new Date(dateStr)
+  const [year, month, day] = dateStr.split('-').map(Number)
+  const date = new Date(year, month - 1, day, 23, 59, 59, 999)
   const today = new Date()
   today.setHours(23, 59, 59, 999)
   return date.getTime() <= today.getTime()
