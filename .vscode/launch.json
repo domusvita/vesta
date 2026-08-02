@@ -5,7 +5,7 @@
       "name": "API: Azure Functions",
       "type": "coreclr",
       "request": "attach",
-      "processName": "dotnet",
+      "processId": "${command:azureFunctions.pickProcess}",
       "preLaunchTask": "func: host start"
     },
     {

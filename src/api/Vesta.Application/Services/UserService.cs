@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Vesta.Application.DTOs;
 using Vesta.Application.Interfaces;
 using Vesta.Application.Mappers;
@@ -58,5 +58,102 @@ public class UserService(IVestaDbContext vestaDbContext) : IUserService
             .ToListAsync();
 
         return userEntities.Select(u => u.ToDto()).ToList();
+    }
+
+    // <inheritdoc />
+    public async Task<UserDto> UpdateAsync(Guid id, UpsertUserRequest request)
+    {
+        ValidateUpsertRequest(request);
+
+        var userEntity = await vestaDbContext.Users
+            .Include(u => u.Roles)
+            .FirstOrDefaultAsync(u => u.Id == id);
+
+        if (userEntity is null)
+        {
+            throw new KeyNotFoundException($"User with id '{id}' was not found.");
+        }
+
+        userEntity.DisplayName = request.DisplayName.Trim();
+        userEntity.DateOfBirth = request.DateOfBirth;
+        userEntity.AvatarUrl = request.AvatarUrl;
+        userEntity.UpdatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc);
+
+        await vestaDbContext.SaveChangesAsync();
+
+        return userEntity.ToDto();
+    }
+
+    // <inheritdoc />
+    public async Task<UserDto> CreateByAdminAsync(UpsertUserRequest request)
+    {
+        ValidateUpsertRequest(request);
+
+        var userEntity = new UserEntity
+        {
+            Id = Guid.NewGuid(),
+            Auth0Id = null,
+            DisplayName = request.DisplayName.Trim(),
+            DateOfBirth = request.DateOfBirth,
+            AvatarUrl = request.AvatarUrl,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
+        };
+
+        vestaDbContext.Users.Add(userEntity);
+        await vestaDbContext.SaveChangesAsync();
+
+        return userEntity.ToDto();
+    }
+
+    // <inheritdoc />
+    public async Task<UserDto> RemoveAllRolesAsync(Guid id)
+    {
+        var userEntity = await vestaDbContext.Users
+            .Include(u => u.Roles)
+            .FirstOrDefaultAsync(u => u.Id == id);
+
+        if (userEntity is null)
+        {
+            throw new KeyNotFoundException($"User with id '{id}' was not found.");
+        }
+
+        if (userEntity.Roles.Count > 0)
+        {
+            foreach (var role in userEntity.Roles.ToList())
+            {
+                vestaDbContext.UserRoles.Remove(role);
+            }
+
+            userEntity.Roles.Clear();
+            await vestaDbContext.SaveChangesAsync();
+        }
+
+        return userEntity.ToDto();
+    }
+
+    private static void ValidateUpsertRequest(UpsertUserRequest request)
+    {
+        var displayName = request.DisplayName?.Trim() ?? string.Empty;
+        if (displayName.Length is < 2 or > 100)
+        {
+            throw new ArgumentException("DisplayName is required and must be between 2 and 100 characters.");
+        }
+
+        if (request.DateOfBirth.HasValue && request.DateOfBirth.Value.Date > DateTime.UtcNow.Date)
+        {
+            throw new ArgumentException("DateOfBirth cannot be in the future.");
+        }
+
+        if (!string.IsNullOrWhiteSpace(request.AvatarUrl))
+        {
+            var isValidUri = Uri.TryCreate(request.AvatarUrl, UriKind.Absolute, out var uri)
+                && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps);
+
+            if (!isValidUri)
+            {
+                throw new ArgumentException("AvatarUrl must be a well-formed absolute http or https URL.");
+            }
+        }
     }
 }

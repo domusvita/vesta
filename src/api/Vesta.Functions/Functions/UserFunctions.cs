@@ -96,22 +96,172 @@ public class UserFunctions(IUserService userService, ILogger<UserFunctions> logg
         FunctionContext context
     )
     {
+        var (_, errorResponse) = await RequireAdminAsync(req, context);
+        if (errorResponse is not null)
+        {
+            return errorResponse;
+        }
+
+        var users = await userService.GetAllAsync();
+        return await CreateJsonResponse(req, HttpStatusCode.OK, new FunctionResponse<IList<UserDto>>(true, users));
+    }
+
+    /// <summary>
+    /// Handles the HTTP PUT request to update an existing user's profile. Restricted to Admin users.
+    /// </summary>
+    [Function("UpdateUser")]
+    public async Task<HttpResponseData> UpdateUser(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "users/{id:guid}")] HttpRequestData req,
+        FunctionContext context,
+        Guid id
+    )
+    {
+        var (_, errorResponse) = await RequireAdminAsync(req, context);
+        if (errorResponse is not null)
+        {
+            return errorResponse;
+        }
+
+        UpsertUserRequest? request;
+        try
+        {
+            request = await System.Text.Json.JsonSerializer.DeserializeAsync<UpsertUserRequest>(
+                req.Body,
+                new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true }
+            );
+        }
+        catch
+        {
+            return await CreateJsonResponse(req, HttpStatusCode.BadRequest, new FunctionResponse<UserDto>(false));
+        }
+
+        if (request is null)
+        {
+            return await CreateJsonResponse(req, HttpStatusCode.BadRequest, new FunctionResponse<UserDto>(false));
+        }
+
+        try
+        {
+            var updatedUser = await userService.UpdateAsync(id, request);
+            return await CreateJsonResponse(req, HttpStatusCode.OK, new FunctionResponse<UserDto>(true, updatedUser));
+        }
+        catch (ArgumentException ex)
+        {
+            return await CreateJsonResponse(req, HttpStatusCode.BadRequest, new FunctionResponse<UserDto>(false, message: ex.Message));
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return await CreateJsonResponse(req, HttpStatusCode.NotFound, new FunctionResponse<UserDto>(false, message: ex.Message));
+        }
+    }
+
+    /// <summary>
+    /// Handles the HTTP POST request for an Admin to create a new user profile without an Auth0 identity.
+    /// </summary>
+    [Function("CreateUserByAdmin")]
+    public async Task<HttpResponseData> CreateUserByAdmin(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "users/admin")] HttpRequestData req,
+        FunctionContext context
+    )
+    {
+        var (_, errorResponse) = await RequireAdminAsync(req, context);
+        if (errorResponse is not null)
+        {
+            return errorResponse;
+        }
+
+        UpsertUserRequest? request;
+        try
+        {
+            request = await System.Text.Json.JsonSerializer.DeserializeAsync<UpsertUserRequest>(
+                req.Body,
+                new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true }
+            );
+        }
+        catch
+        {
+            return await CreateJsonResponse(req, HttpStatusCode.BadRequest, new FunctionResponse<UserDto>(false));
+        }
+
+        if (request is null)
+        {
+            return await CreateJsonResponse(req, HttpStatusCode.BadRequest, new FunctionResponse<UserDto>(false));
+        }
+
+        try
+        {
+            var createdUser = await userService.CreateByAdminAsync(request);
+            return await CreateJsonResponse(req, HttpStatusCode.OK, new FunctionResponse<UserDto>(true, createdUser));
+        }
+        catch (ArgumentException ex)
+        {
+            return await CreateJsonResponse(req, HttpStatusCode.BadRequest, new FunctionResponse<UserDto>(false, message: ex.Message));
+        }
+    }
+
+    /// <summary>
+    /// Handles the HTTP DELETE request to remove all role assignments from a user. Restricted to Admin users.
+    /// </summary>
+    [Function("DeleteUser")]
+    public async Task<HttpResponseData> DeleteUser(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "users/{id:guid}")] HttpRequestData req,
+        FunctionContext context,
+        Guid id
+    )
+    {
+        var (adminUser, errorResponse) = await RequireAdminAsync(req, context);
+        if (errorResponse is not null)
+        {
+            return errorResponse;
+        }
+
+        if (adminUser!.Id.HasValue && adminUser.Id.Value == id)
+        {
+            return await CreateJsonResponse(
+                req,
+                HttpStatusCode.BadRequest,
+                new FunctionResponse<UserDto>(false, message: "You cannot remove your own roles.")
+            );
+        }
+
+        try
+        {
+            var updatedUser = await userService.RemoveAllRolesAsync(id);
+            return await CreateJsonResponse(req, HttpStatusCode.OK, new FunctionResponse<UserDto>(true, updatedUser));
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return await CreateJsonResponse(req, HttpStatusCode.NotFound, new FunctionResponse<UserDto>(false, message: ex.Message));
+        }
+    }
+
+    /// <summary>
+    /// Resolves the calling user and verifies they hold the Admin role.
+    /// </summary>
+    /// <returns>
+    /// The current user's <see cref="UserDto"/> and a null error response on success; otherwise a null
+    /// user and an Unauthorized/Forbidden response to return directly to the caller.
+    /// </returns>
+    private async Task<(UserDto? User, HttpResponseData? ErrorResponse)> RequireAdminAsync(
+        HttpRequestData req,
+        FunctionContext context
+    )
+    {
         var user = context.Items["User"] as ClaimsPrincipal;
         var auth0Id = GetAuth0Id(user);
 
         if (string.IsNullOrEmpty(auth0Id))
         {
-            return await CreateJsonResponse(req, HttpStatusCode.Unauthorized, new FunctionResponse<IList<UserDto>>(false));
+            return (null, await CreateJsonResponse(req, HttpStatusCode.Unauthorized, new FunctionResponse<object>(false)));
         }
 
         var currentUser = await userService.GetByAuthIdAsync(auth0Id);
         if (currentUser is null || !currentUser.Roles.Contains("Admin"))
         {
-            return await CreateJsonResponse(req, HttpStatusCode.Forbidden, new FunctionResponse<IList<UserDto>>(false));
+            return (null, await CreateJsonResponse(req, HttpStatusCode.Forbidden, new FunctionResponse<object>(false)));
         }
 
-        var users = await userService.GetAllAsync();
-        return await CreateJsonResponse(req, HttpStatusCode.OK, new FunctionResponse<IList<UserDto>>(true, users));
+        return (currentUser, null);
     }
 
     private static async Task<HttpResponseData> CreateJsonResponse<T>(

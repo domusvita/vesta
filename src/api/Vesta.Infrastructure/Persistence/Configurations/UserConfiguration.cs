@@ -10,7 +10,7 @@ public class UserConfiguration : IEntityTypeConfiguration<UserEntity>
     {
         builder.HasKey(u => u.Id);
 
-        builder.Property(u => u.Auth0Id).IsRequired().HasMaxLength(128);
+        builder.Property(u => u.Auth0Id).HasMaxLength(128);
 
         builder.HasIndex(u => u.Auth0Id).IsUnique();
 

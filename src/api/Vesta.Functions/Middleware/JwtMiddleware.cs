@@ -65,6 +65,7 @@ public class JwtMiddleware(IConfiguration configuration) : IFunctionsWorkerMiddl
         {
             AddCorsHeaders(response);
         }
+    }
 
     /// <summary>
     /// Extracts the JWT token from the Authorization header of the HTTP request.
