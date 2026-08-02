@@ -20,6 +20,7 @@ export default function AdminUsersPage() {
   const [deleteError, setDeleteError] = useState<string | null>(null)
 
   function refresh() {
+    setLoadError(null)
     getAllUsers()
       .then(setUsers)
       .catch(() => setLoadError('Failed to load users'))
