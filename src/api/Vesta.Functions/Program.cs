@@ -24,7 +24,7 @@ var host = new HostBuilder()
             }
         }
     )
-    .ConfigureFunctionsWorkerDefaults
+    .ConfigureFunctionsWebApplication
     (worker => { worker.UseMiddleware<JwtMiddleware>(); }
     )
     .ConfigureServices

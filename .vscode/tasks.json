@@ -3,8 +3,8 @@
   "tasks": [
     {
       "label": "func: host start",
-      "type": "func",
-      "command": "host start --port 7207",
+      "type": "shell",
+      "command": "func host start --port 7207",
       "problemMatcher": "$func-dotnet-watch",
       "options": {
         "cwd": "${workspaceFolder}/src/api/Vesta.Functions"

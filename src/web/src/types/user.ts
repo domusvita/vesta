@@ -10,3 +10,9 @@ export interface UserDto {
   roles: RoleDto[]
   createdAt: string
 }
+
+export interface UpsertUserRequest {
+  displayName: string
+  dateOfBirth: string | null
+  avatarUrl: string | null
+}
