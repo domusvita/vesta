@@ -7,6 +7,7 @@ import HomePage from './pages/HomePage'
 import ProfileSetupPage from './pages/ProfileSetupPage'
 import NotFoundPage from './pages/NotFoundPage'
 import AdminUsersPage from './pages/admin/AdminUsersPage'
+import AdminQuestionsPage from './pages/admin/AdminQuestionsPage'
 import useCurrentUser from './hooks/useCurrentUser'
 
 function AppRoutes() {
@@ -20,6 +21,7 @@ function AppRoutes() {
           <Route index element={<HomePage />} />
           <Route path="admin" element={<AdminRoute />}>
             <Route index element={<AdminUsersPage />} />
+            <Route path="questions" element={<AdminQuestionsPage />} />
           </Route>
           <Route path="*" element={<NotFoundPage />} />
         </Route>
