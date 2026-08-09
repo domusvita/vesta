@@ -1,6 +1,12 @@
+export interface RoleDto {
+  id: string
+  name: string
+}
+
 export interface UserDto {
   id: string
   displayName: string
-  roles: string[]
+  avatarUrl: string
+  roles: RoleDto[]
   createdAt: string
 }

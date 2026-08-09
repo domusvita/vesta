@@ -1,4 +1,8 @@
-﻿namespace Vesta.Application.DTOs;
+﻿using Vesta.Application.DTOs;
+
+namespace Vesta.Application.DTOs;
+
+
 
 public class UserDto
 {
@@ -6,7 +10,9 @@ public class UserDto
 
     public string DisplayName { get; set; } = string.Empty;
 
-    public IList<string> Roles { get; set; } = [];
+    public string AvatarUrl { get; set; } = string.Empty;
+
+    public IList<RoleDto> Roles { get; set; } = [];
 
     public DateTime CreatedAt { get; set; }
 }

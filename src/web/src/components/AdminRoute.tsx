@@ -8,7 +8,7 @@ export default function AdminRoute() {
     return null
   }
 
-  if (!user.roles.includes('Admin')) {
+  if (!user.roles.some((r) => r.name === 'Admin')) {
     return <Navigate to="/" replace />
   }
 
