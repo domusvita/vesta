@@ -16,6 +16,7 @@ public static class UserMapper
         {
             Id = user.Id,
             DisplayName = user.DisplayName,
+            DateOfBirth = user.DateOfBirth,
             AvatarUrl = user.AvatarUrl ?? string.Empty,
             Roles = user.Roles.ToDto(),
             CreatedAt = user.CreatedAt

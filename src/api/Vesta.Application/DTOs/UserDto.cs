@@ -14,7 +14,7 @@ public class UserDto
 
     public string? AvatarUrl { get; set; }
 
-    public IList<string> Roles { get; set; } = [];
+    public IList<RoleDto> Roles { get; set; } = [];
 
     public DateTime CreatedAt { get; set; }
 }

@@ -317,7 +317,8 @@ namespace Vesta.Infrastructure.Migrations
                         .HasColumnName("id");
 
                     b.Property<string>("Category")
-                        .HasColumnType("text")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
                         .HasColumnName("category");
 
                     b.Property<string>("Content")
@@ -330,17 +331,62 @@ namespace Vesta.Infrastructure.Migrations
                         .HasColumnName("created_at");
 
                     b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
+                        .HasDefaultValue(true)
                         .HasColumnName("is_active");
 
                     b.Property<int?>("MinAge")
                         .HasColumnType("integer")
                         .HasColumnName("min_age");
 
+                    b.Property<string>("QuestionType")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasDefaultValue("MultipleChoice")
+                        .HasColumnName("question_type");
+
                     b.HasKey("Id")
                         .HasName("pk_questions");
 
                     b.ToTable("questions", (string)null);
+                });
+
+            modelBuilder.Entity("Vesta.Domain.Entities.QuestionOptionEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<bool>("IsOther")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("is_other");
+
+                    b.Property<string>("Label")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("label");
+
+                    b.Property<Guid>("QuestionId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("question_id");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer")
+                        .HasColumnName("sort_order");
+
+                    b.HasKey("Id")
+                        .HasName("pk_question_options");
+
+                    b.HasIndex("QuestionId", "SortOrder")
+                        .HasDatabaseName("ix_question_options_question_id_sort_order");
+
+                    b.ToTable("question_options", (string)null);
                 });
 
             modelBuilder.Entity("Vesta.Domain.Entities.RoleEntity", b =>
@@ -567,6 +613,18 @@ namespace Vesta.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Vesta.Domain.Entities.QuestionOptionEntity", b =>
+                {
+                    b.HasOne("Vesta.Domain.Entities.QuestionEntity", "Question")
+                        .WithMany("Options")
+                        .HasForeignKey("QuestionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_question_options_questions_question_id");
+
+                    b.Navigation("Question");
+                });
+
             modelBuilder.Entity("Vesta.Domain.Entities.UserRoleEntity", b =>
                 {
                     b.HasOne("Vesta.Domain.Entities.RoleEntity", "Role")
@@ -607,6 +665,8 @@ namespace Vesta.Infrastructure.Migrations
             modelBuilder.Entity("Vesta.Domain.Entities.QuestionEntity", b =>
                 {
                     b.Navigation("DailyQuestions");
+
+                    b.Navigation("Options");
                 });
 
             modelBuilder.Entity("Vesta.Domain.Entities.RoleEntity", b =>

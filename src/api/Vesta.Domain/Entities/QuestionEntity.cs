@@ -6,6 +6,8 @@ public class QuestionEntity
 
     public string Content { get; set; } = string.Empty;
 
+    public string QuestionType { get; set; } = "MultipleChoice";
+
     public string? Category { get; set; }
 
     public int? MinAge { get; set; }
@@ -15,4 +17,6 @@ public class QuestionEntity
     public DateTime CreatedAt { get; set; }
 
     public ICollection<DailyQuestionEntity> DailyQuestions { get; set; } = [];
+
+    public ICollection<QuestionOptionEntity> Options { get; set; } = [];
 }

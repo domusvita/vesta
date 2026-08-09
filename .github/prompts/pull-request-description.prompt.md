@@ -1,0 +1,27 @@
+Please provide a description of the changes made for a GitHub pull request.
+
+- The description should be concise and clearly explain the purpose and scope of the changes made.
+- Include any relevant context, such as related issues or dependencies.
+- Highlight any breaking changes or important considerations for reviewers.
+- Provide a summary of the main changes made in the code, including any new features, bug fixes, or refactoring.
+- It should be written in a way that it is easy for a junior developer to understand the changes and their impact.
+- Provide the pull request description in markdown syntax so that it can be copy and pasted directly into a GitHub pull request.
+- Provide the description in the following format (Copilot instructions are found with then "{" and "}" symbols):
+- 
+- ### What
+- 
+- {High-level summary of the features added or bugs fixed}
+-
+- ### Why
+- 
+- {Reason for making the changes, including any relevant context or related issues}
+-
+- ### How
+-
+- {Explanation of how the changes were implemented}
+- 
+- ### Testing
+-
+- {Description of the testing performed to verify the changes}
+- 
+- ### Screenshots (Optional)

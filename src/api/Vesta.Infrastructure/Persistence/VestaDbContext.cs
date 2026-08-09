@@ -31,6 +31,8 @@ public class VestaDbContext(DbContextOptions<VestaDbContext> options) : DbContex
     // <inheritdoc />
     public DbSet<QuestionEntity> Questions => Set<QuestionEntity>();
 
+    public DbSet<QuestionOptionEntity> QuestionOptions => Set<QuestionOptionEntity>();
+
     // <inheritdoc />
     public DbSet<DailyQuestionEntity> DailyQuestions => Set<DailyQuestionEntity>();
 

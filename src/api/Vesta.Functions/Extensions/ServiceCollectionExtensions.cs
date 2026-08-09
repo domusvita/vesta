@@ -9,16 +9,14 @@ namespace Vesta.Functions.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    extension(IServiceCollection services)
+    public static IServiceCollection AddVestaFunctions(this IServiceCollection services, IConfiguration configuration)
     {
-        public IServiceCollection AddVestaFunctions(IConfiguration configuration)
-        {
-            return services
-                .AddVestaDatabase(configuration)
-                .AddVestaAuthentication(configuration);
-        }
+        return services
+            .AddVestaDatabase(configuration)
+            .AddVestaAuthentication(configuration);
+    }
 
-        private IServiceCollection AddVestaDatabase(IConfiguration configuration)
+    private static IServiceCollection AddVestaDatabase(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddDbContext<VestaDbContext>
             (options => options
@@ -39,7 +37,7 @@ public static class ServiceCollectionExtensions
         /// should be called during application startup to enable secure authentication for
         /// protected endpoints.
         /// </remarks>
-        private IServiceCollection AddVestaAuthentication(IConfiguration configuration)
+        private static IServiceCollection AddVestaAuthentication(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer
@@ -52,5 +50,4 @@ public static class ServiceCollectionExtensions
 
             return services;
         }
-    }
 }
