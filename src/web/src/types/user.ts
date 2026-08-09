@@ -6,6 +6,7 @@ export interface RoleDto {
 export interface UserDto {
   id: string
   displayName: string
+  dateOfBirth: string | null
   avatarUrl: string
   roles: RoleDto[]
   createdAt: string

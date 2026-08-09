@@ -5,7 +5,7 @@ import useUserStore from '../store/userStore'
 export default function MainLayout() {
   const { isAuthenticated, loginWithRedirect, logout } = useAuth0()
   const user = useUserStore((s) => s.user)
-  const isAdmin = user?.roles.includes('Admin')
+  const isAdmin = user?.roles?.some(role => role.name === 'Admin')
 
   return (
     <div>
