@@ -19,6 +19,14 @@ public class UserFunctions(IUserService userService, ILogger<UserFunctions> logg
     /// <summary>
     /// Handles the HTTP GET request to retrieve the current user's information.
     /// </summary>
+    /// <param name="req">The HTTP request data containing the trigger binding.</param>
+    /// <param name="context">The function context providing access to the current user.</param>
+    /// <returns>An HTTP response containing the current user's information or an appropriate error status code.</returns>
+    /// <remarks>
+    /// This function retrieves the authenticated user's Auth0 ID from the claim principal and fetches their information
+    /// from the user service. Returns 401 Unauthorized if the user cannot be authenticated, 404 Not Found if the user
+    /// doesn't exist in the system, or 200 OK with the user details if successful.
+    /// </remarks>
     [Function("GetCurrentUser")]
     public async Task<HttpResponseData> GetCurrentUser(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "users/me")] HttpRequestData req,
@@ -256,7 +264,7 @@ public class UserFunctions(IUserService userService, ILogger<UserFunctions> logg
         }
 
         var currentUser = await userService.GetByAuthIdAsync(auth0Id);
-        if (currentUser is null || !currentUser.Roles.Contains("Admin"))
+        if (currentUser is null || !currentUser.Roles.Any(r => r.Name == "Admin"))
         {
             return (null, await CreateJsonResponse(req, HttpStatusCode.Forbidden, new FunctionResponse<object>(false)));
         }

@@ -17,6 +17,7 @@ public class UserService(IVestaDbContext vestaDbContext) : IUserService
     {
         var userEntity = await vestaDbContext.Users
             .Include(u => u.Roles)
+            .ThenInclude(ur => ur.Role)
             .FirstOrDefaultAsync(u => u.Auth0Id == authId);
 
         return userEntity?.ToDto();
@@ -37,7 +38,7 @@ public class UserService(IVestaDbContext vestaDbContext) : IUserService
                 new UserRoleEntity
                 {
                     Id = Guid.NewGuid(),
-                    Name = "User",
+                    RoleId = Guid.NewGuid(), // Replace with the actual RoleId for the "User" role
                     AssignedAt = DateTime.UtcNow
                 }
             ]
@@ -54,6 +55,7 @@ public class UserService(IVestaDbContext vestaDbContext) : IUserService
     {
         var userEntities = await vestaDbContext.Users
             .Include(u => u.Roles)
+            .ThenInclude(ur => ur.Role)
             .OrderBy(u => u.CreatedAt)
             .ToListAsync();
 

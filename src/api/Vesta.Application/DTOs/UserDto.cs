@@ -1,4 +1,8 @@
+using Vesta.Application.DTOs;
+
 namespace Vesta.Application.DTOs;
+
+
 
 public class UserDto
 {

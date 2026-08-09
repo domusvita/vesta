@@ -25,7 +25,7 @@ export default function useCurrentUser() {
 
       if (user) {
         setUser(user)
-        if (user.roles.includes('Admin')) {
+        if (user.roles.some((r) => r.name === 'Admin')) {
           navigate('/admin')
         }
       } else {

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Vesta.Infrastructure.Persistence;
@@ -11,9 +12,11 @@ using Vesta.Infrastructure.Persistence;
 namespace Vesta.Infrastructure.Migrations
 {
     [DbContext(typeof(VestaDbContext))]
-    partial class VestaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260805014355_AddRolesTable")]
+    partial class AddRolesTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -370,6 +373,7 @@ namespace Vesta.Infrastructure.Migrations
                         .HasColumnName("id");
 
                     b.Property<string>("Auth0Id")
+                        .IsRequired()
                         .HasMaxLength(128)
                         .HasColumnType("character varying(128)")
                         .HasColumnName("auth0id");

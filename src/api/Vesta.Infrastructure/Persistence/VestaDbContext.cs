@@ -14,6 +14,8 @@ public class VestaDbContext(DbContextOptions<VestaDbContext> options) : DbContex
     // <inheritdoc />
     public DbSet<UserEntity> Users => Set<UserEntity>();
 
+    public DbSet<RoleEntity> Roles => Set<RoleEntity>();
+
     // <inheritdoc />
     public DbSet<UserRoleEntity> UserRoles => Set<UserRoleEntity>();
 

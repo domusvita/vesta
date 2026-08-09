@@ -99,8 +99,8 @@ export default function AdminUsersPage() {
               <Table.Cell>{user.displayName}</Table.Cell>
               <Table.Cell>
                 {user.roles.map((role) => (
-                  <Badge key={role} mr="1">
-                    {role}
+                  <Badge key={role.id} mr="1">
+                    {role.name}
                   </Badge>
                 ))}
               </Table.Cell>

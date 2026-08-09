@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Vesta.Infrastructure.Persistence;
@@ -11,9 +12,11 @@ using Vesta.Infrastructure.Persistence;
 namespace Vesta.Infrastructure.Migrations
 {
     [DbContext(typeof(VestaDbContext))]
-    partial class VestaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260809185009_MakeAuth0IdNullable")]
+    partial class MakeAuth0IdNullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

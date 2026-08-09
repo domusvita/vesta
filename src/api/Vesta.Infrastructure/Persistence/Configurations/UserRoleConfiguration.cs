@@ -10,9 +10,9 @@ public class UserRoleConfiguration : IEntityTypeConfiguration<UserRoleEntity>
     {
         builder.HasKey(r => r.Id);
 
-        builder.Property(r => r.Name).IsRequired().HasMaxLength(50);
+        builder.Property(r => r.RoleId).IsRequired();
 
-        builder.HasIndex(r => new { r.UserId, r.Name }).IsUnique();
+        builder.HasIndex(r => new { r.UserId, r.RoleId }).IsUnique();
 
         builder.Property(r => r.AssignedAt).HasColumnType("timestamptz");
 
