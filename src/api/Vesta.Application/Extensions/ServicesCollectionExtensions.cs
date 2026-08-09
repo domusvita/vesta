@@ -6,11 +6,10 @@ namespace Vesta.Application.Extensions;
 
 public static class ServicesCollectionExtensions
 {
-    extension(IServiceCollection services)
+    public static IServiceCollection AddVestaApplication(this IServiceCollection services)
     {
-        public IServiceCollection AddVestaApplication()
-        {
-            return services.AddScoped<IUserService, UserService>();
-        }
+        services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IQuestionService, QuestionService>();
+        return services;
     }
 }

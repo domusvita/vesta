@@ -24,7 +24,23 @@ var host = new HostBuilder()
             }
         }
     )
-    .ConfigureFunctionsWebApplication
+    .ConfigureServices
+    ((context, services) =>
+        {
+            services
+                .AddVestaFunctions(context.Configuration)
+                .AddVestaInfrastructure()
+                .AddVestaApplication();
+
+            services.Configure<WorkerOptions>(options =>
+            {
+                options.Serializer = new Azure.Core.Serialization.JsonObjectSerializer(
+                    new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }
+                );
+            });
+        }
+    )
+    .ConfigureFunctionsWorkerDefaults
     (worker => { worker.UseMiddleware<JwtMiddleware>(); }
     )
     .ConfigureServices

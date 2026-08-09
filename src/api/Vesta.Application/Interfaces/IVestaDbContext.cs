@@ -40,6 +40,11 @@ public interface IVestaDbContext
     DbSet<QuestionEntity> Questions { get; }
 
     /// <summary>
+    /// Gets the <see cref="DbSet{QuestionOptionEntity}"/> for the specified entity type.
+    /// </summary>
+    DbSet<QuestionOptionEntity> QuestionOptions { get; }
+
+    /// <summary>
     /// Gets the <see cref="DbSet{DailyQuestionEntity}"/> for the specified entity type.
     /// </summary>
     DbSet<DailyQuestionEntity> DailyQuestions { get; }
